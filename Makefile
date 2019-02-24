@@ -1,22 +1,28 @@
 PYTHON = python3
 RM = rm
+PKG_NAME = postfix_mta_sts_resolver
 
 PRJ_DIR = $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 VENV ?= $(PRJ_DIR)venv
+PKGVENV ?= $(PRJ_DIR)pkg_venv
 
 install: $(VENV) setup.py
-	$(VENV)/bin/pip install -U .
+	$(VENV)/bin/$(PYTHON) -m pip install -U .
 
 $(VENV):
 	$(PYTHON) -m venv $(VENV)
-	$(VENV)/bin/pip install -U wheel
+	$(VENV)/bin/$(PYTHON) -m pip install -U wheel
 
 uninstall: $(VENV)
-	$(VENV)/bin/pip uninstall -y postfix_mta_sts_resolver
+	$(VENV)/bin/$(PYTHON) -m pip uninstall -y $(PKG_NAME)
 
 clean:
-	$(RM) -rf $(VENV)
+	$(RM) -rf $(VENV) $(PKGVENV) dist/ build/ $(PKG_NAME).egg-info/
 
-pkg:
+$(PKGVENV):
+	$(PYTHON) -m venv $(PKGVENV)
+	$(PKGVENV)/bin/$(PYTHON) -m pip install -U setuptools wheel twine
+
+pkg: $(PKGVENV)
     # TODO: packaging venv and setuptools upgrade
-	#python3 setup.py sdist bdist_wheel
+	$(PKGVENV)/bin/$(PYTHON) setup.py sdist bdist_wheel
