@@ -17,3 +17,6 @@ uninstall: $(VENV)
 clean:
 	$(RM) -rf $(VENV)
 
+pkg:
+    # TODO: packaging venv and setuptools upgrade
+	#python3 setup.py sdist bdist_wheel
