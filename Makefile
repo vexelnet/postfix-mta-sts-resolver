@@ -31,11 +31,10 @@ $(PKG_NAME).egg-info/PKG-INFO: $(PKGVENV)
 
 version: $(PKG_NAME).egg-info/PKG-INFO
 	@echo Evaluating pagkage version...
-	$(eval PKG_VERSION := $(shell grep -Po '(?<=^Version: ).*' $<))
+	$(eval PKG_VERSION := $(if $(PKG_VERSION),$(PKG_VERSION),$(shell grep -Po '(?<=^Version: ).*' $<)))
 	@echo Version = $(PKG_VERSION)
 
 upload: pkg version
-	@echo ls -1 dist/$(PKG_NAME)-$(PKG-VERSION)*
-	@ls -1 dist/$(PKG_NAME)-$(PKG-VERSION)*
+	$(PKGVENV)/bin/$(PYTHON) -m twine upload dist/$(PKG_NAME)-$(PKG_VERSION)*
 
 .PHONY: install clean uninstall pkg version
