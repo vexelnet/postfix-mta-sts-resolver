@@ -24,5 +24,18 @@ $(PKGVENV):
 	$(PKGVENV)/bin/$(PYTHON) -m pip install -U setuptools wheel twine
 
 pkg: $(PKGVENV)
-    # TODO: packaging venv and setuptools upgrade
 	$(PKGVENV)/bin/$(PYTHON) setup.py sdist bdist_wheel
+
+$(PKG_NAME).egg-info/PKG-INFO: $(PKGVENV)
+	$(PKGVENV)/bin/$(PYTHON) setup.py egg_info
+
+version: $(PKG_NAME).egg-info/PKG-INFO
+	@echo Evaluating pagkage version...
+	$(eval PKG_VERSION := $(shell grep -Po '(?<=^Version: ).*' $<))
+	@echo Version = $(PKG_VERSION)
+
+upload: pkg version
+	@echo ls -1 dist/$(PKG_NAME)-$(PKG-VERSION)*
+	@ls -1 dist/$(PKG_NAME)-$(PKG-VERSION)*
+
+.PHONY: install clean uninstall pkg version
